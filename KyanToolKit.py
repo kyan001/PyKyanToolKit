@@ -17,11 +17,11 @@ import queue
 from functools import wraps
 
 
-class KyanToolKit_Py(object):
+class KyanToolKit(object):
 
     @property
     def version(self):
-        return '4.5'
+        return '4.5.1'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -299,17 +299,17 @@ class KyanToolKit_Py(object):
             ktk_req = urllib.request.urlopen(ktk_url)
             ktk_codes = ktk_req.read()
             ktk_codes_md5 = self.md5(ktk_codes)
-            with open("KyanToolKit_Py.py", "rb") as ktk_file:
+            with open("KyanToolKit.py", "rb") as ktk_file:
                 ktk_file_md5 = self.md5(ktk_file.read())
             if ktk_codes_md5 != ktk_file_md5:
-                with open("KyanToolKit_Py.py", "wb") as ktk_file:
+                with open("KyanToolKit.py", "wb") as ktk_file:
                     ktk_file.write(ktk_codes)
-                self.asyncPrint("\n\n[KyanToolKit_Py.py] Updated \n(From Version: {})\n\n".format(version_old))
+                self.asyncPrint("\n\n[KyanToolKit.py] Updated \n(From Version: {})\n\n".format(version_old))
             else:
-                self.asyncPrint("\n\n[KyanToolKit_Py.py] No Need Update \n(Version: {})\n\n".format(version_old))
+                self.asyncPrint("\n\n[KyanToolKit.py] No Need Update \n(Version: {})\n\n".format(version_old))
             return True
         except Exception as e:
-            self.asyncPrint("\n\n[KyanToolKit_Py.py] Update Failed ({})\n\n".format(str(e)))
+            self.asyncPrint("\n\n[KyanToolKit.py] Update Failed ({})\n\n".format(str(e)))
             self.asyncPrint("\n")
             return False
 
@@ -341,5 +341,5 @@ class KyanToolKit_Py(object):
             print(q.get())
 
 if __name__ == '__main__':
-    ktk = KyanToolKit_Py()
+    ktk = KyanToolKit()
     ktk.update()
