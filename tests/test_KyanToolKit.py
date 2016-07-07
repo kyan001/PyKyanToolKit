@@ -19,7 +19,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     用于测试 KyanToolKit
     '''
-    ktk_version = '4.5.1'
+    ktk_version = '4.5.2'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit()
