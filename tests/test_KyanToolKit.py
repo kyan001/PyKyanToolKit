@@ -7,11 +7,12 @@ import os
 import threading
 import time
 import unittest
-sys.path.append('../')
 
 import FakeOut
 import FakeIn
 import FakeOs
+
+sys.path.insert(0, '../')
 import KyanToolKit
 
 
@@ -19,7 +20,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     用于测试 KyanToolKit
     '''
-    ktk_version = '4.5.2'
+    ktk_version = '4.5.3'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit()

@@ -21,7 +21,7 @@ class KyanToolKit(object):
 
     @property
     def version(self):
-        return '4.5.2'
+        return '4.5.3'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -49,7 +49,6 @@ class KyanToolKit(object):
                     mutex.release()
         return callInputFunc
 
-    @staticmethod
     def async(input_func: callable):  # decorator
         """使函数单开一个线程执行"""
         @wraps(input_func)
