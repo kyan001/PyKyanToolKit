@@ -12,65 +12,22 @@ import urllib.request
 import hashlib
 import json
 import io
-import threading
-import queue
+import consoleiotools as cit
 from functools import wraps
 
 
 class KyanToolKit(object):
-
     @property
     def version(self):
-        return '4.5.3'
+        return '5.0.0'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
-        self.q = {
-            'stdout': queue.Queue()
-        }
-        self.mutex = {
-            'stdout': threading.Lock()
-        }
 
     def __del__(self):
         pass
 
 # -Decorators-----------------------------------------------------
-    def lockStdout(input_func: callable):  # decorator
-        '使函数占住 stdout，执行期间不让其他线程打印'
-        @wraps(input_func)
-        def callInputFunc(*args, **kwargs):
-            self = args[0]
-            mutex = self.mutex.get('stdout')
-            if mutex.acquire():
-                try:
-                    return input_func(*args, **kwargs)
-                finally:
-                    mutex.release()
-        return callInputFunc
-
-    def async(input_func: callable):  # decorator
-        """使函数单开一个线程执行"""
-        @wraps(input_func)
-        def callInputFunc(*args, **kwargs):
-            t = threading.Thread(target=input_func, args=args, kwargs=kwargs)
-            return t.start()
-        return callInputFunc
-
-    def printStartAndEnd(func_title="function"):  # decorator
-        """使函数执行前和执行完毕后打印 start/end"""
-        def get_func(input_func: callable):
-            @wraps(input_func)
-            def callInputFunc(*args, **kwargs):
-                cls = args[0]
-                cls.pStart()
-                cls.pTitle(func_title)
-                result = input_func(*args, **kwargs)
-                cls.pEnd()
-                return result
-            return callInputFunc
-        return get_func
-
     def inTrace(self, func: callable):  # decorator
         """将被修饰函数的进入和退出写入日志"""
         @wraps(func)
@@ -96,41 +53,6 @@ class KyanToolKit(object):
         content_line_length = len(content_line)
         banner_border = sp_char * content_line_length
         return banner_border + '\n' + content_line + '\n' + banner_border
-
-    @classmethod
-    def echo(cls, words, prefix="", lvl=0):
-        words = str(words)
-        if prefix:
-            prefix = '({})'.format(prefix.capitalize()) + ' '
-        tabs = '    ' * int(lvl) if int(lvl) else ''
-        print("| {p}{t}{w}".format(p=prefix, t=tabs, w=words))
-        return cls
-
-    @classmethod
-    def pStart(cls):
-        print('*')
-        return cls
-
-    @classmethod
-    def pEnd(cls):
-        print('!')
-        return cls
-
-    @classmethod
-    def pTitle(cls, words):
-        return cls.echo(words + ":")
-
-    @classmethod
-    def info(cls, words, **options):
-        return cls.echo(words, "info", **options)
-
-    @classmethod
-    def warn(cls, words, **options):
-        return cls.echo(words, "warning", **options)
-
-    @classmethod
-    def err(cls, words, **options):
-        return cls.echo(words, "error", **options)
 
     @classmethod
     def md5(cls, words=""):
@@ -182,68 +104,47 @@ class KyanToolKit(object):
         elif "linux" in sys.platform:
             os.system('clear')
         else:
-            cls.err("No clearScreen for " + sys.platform)
-
-    @lockStdout
-    def pressToContinue(cls, msg="\nPress Enter to Continue...\n"):
-        """按任意键继续"""
-        # PY2: raw_input(msg)
-        input(msg)
+            cit.err("No clearScreen for " + sys.platform)
 
     @classmethod
-    def byeBye(cls, msg="See you later"):  # BWC
-        """打印消息并退出程序"""
-        cls.bye(msg)
+    @cit.as_session('Run Command')
+    def runCmd(cls, cmd):
+        """run command and show if success or failed
 
-    @classmethod
-    def bye(cls, msg=''):
-        """打印消息并退出程序"""
-        exit(msg)
-
-    @classmethod
-    @printStartAndEnd('Run Command')
-    def runCmd(cls, cmd: str) -> bool:
-        """run command and show if success or failed"""
-        cls.echo(cmd, "command")
+        Args:
+            cmd: string
+        Returns:
+            bool: if this command run successfully
+        """
+        cit.echo(cmd, "command")
         result = os.system(cmd)
         cls.checkResult(result)
 
     @classmethod
-    def readCmd(cls, cmd: str) -> str:
-        """run command and return the str format stdout"""
+    @cit.as_session('Read Command')
+    def readCmd(cls, cmd):
+        """run command and return the str format stdout
+
+        Args:
+            cmd: string
+        Returns:
+            str: what the command's echo
+        """
         args = shlex.split(cmd)
         proc = subprocess.Popen(args, stdout=subprocess.PIPE)
         (proc_stdout, proc_stderr) = proc.communicate(input=None)  # proc_stdin
         return proc_stdout.decode()  # stdout & stderr is in bytes format
 
 # -Get Information------------------------------------------------
-    @lockStdout
-    def getInput(self, question='', prompt='> '):
-        if '' != question:
-            print(question)
-        # PY2: return raw_input(prompt_).strip()
-        return str(input(prompt)).strip()
-
-    def getChoice(self, choices_: list) -> str:
-        """用户可输入选项数字或选项内容，得到用户选择的内容"""
-        assemble_print = ""
-        for index, item in enumerate(choices_):
-            assemble_print += '\n' if index else ''
-            assemble_print += "| " + " {}) ".format(str(index + 1)) + str(item)
-        user_choice = self.getInput(assemble_print)
-        if user_choice in choices_:
-            return user_choice
-        elif user_choice.isdigit():
-            numerical_choice = int(user_choice)
-            if numerical_choice > len(choices_):
-                self.err("Invalid Choice").bye()
-            return choices_[numerical_choice - 1]
-        else:
-            self.err("Please enter a valid choice")
-            return self.getChoice(choices_)
-
     @classmethod
-    def ajax(cls, url: str, param={}, method='get') -> dict:
+    def ajax(cls, url, param={}, method='get'):
+        """Get info by ajax
+
+        Args:
+            url: string
+        Returns:
+            dict: json decoded into a dict
+        """
         param = urllib.parse.urlencode(param)
         if method.lower() == 'get':
             req = urllib.request.Request(url + '?' + param)
@@ -261,20 +162,20 @@ class KyanToolKit(object):
 
 # -Pre-checks---------------------------------------------------
     @classmethod
-    @printStartAndEnd("Platform Check")
+    @cit.as_session("Platform Check")
     def needPlatform(cls, expect_platform: str):
-        cls.info("Need: " + expect_platform)
-        cls.info("Current: " + sys.platform)
+        cit.info("Need: " + expect_platform)
+        cit.info("Current: " + sys.platform)
         if expect_platform not in sys.platform:
-            cls.byeBye("Platform Check Failed")
+            cls.bye("Platform Check Failed")
 
     @classmethod
-    @printStartAndEnd("User Check")
+    @cit.as_session("User Check")
     def needUser(cls, expect_user: str):
-        cls.info("Need: " + expect_user)
-        cls.info("Current: " + cls.getUser())
+        cit.info("Need: " + expect_user)
+        cit.info("Current: " + cls.getUser())
         if cls.getUser() != expect_user:
-            cls.byeBye("User Check Failed")
+            cls.bye("User Check Failed")
 
 # -Debug---------------------------------------------------------
     def TRACE(self, input_: str, trace_type='INFO'):
@@ -291,55 +192,15 @@ class KyanToolKit(object):
         with open(self.trace_file, 'a') as trace:
             trace.write(trace_header + trace_content + "\n</" + trace_type + ">\n")
 
-    @async
-    def update(self):
-        ktk_url = "https://raw.githubusercontent.com/kyan001/PyKyanToolKit/master/KyanToolKit/KyanToolKit.py"
-        version_old = self.version
-        try:
-            ktk_req = urllib.request.urlopen(ktk_url)
-            ktk_codes = ktk_req.read()
-            ktk_codes_md5 = self.md5(ktk_codes)
-            with open("KyanToolKit.py", "rb") as ktk_file:
-                ktk_file_md5 = self.md5(ktk_file.read())
-            if ktk_codes_md5 != ktk_file_md5:
-                with open("KyanToolKit.py", "wb") as ktk_file:
-                    ktk_file.write(ktk_codes)
-                self.asyncPrint("\n\n[KyanToolKit.py] Updated \n(From Version: {})\n\n".format(version_old))
-            else:
-                self.asyncPrint("\n\n[KyanToolKit.py] No Need Update \n(Version: {})\n\n".format(version_old))
-            return True
-        except Exception as e:
-            self.asyncPrint("\n\n[KyanToolKit.py] Update Failed ({})\n\n".format(str(e)))
-            self.asyncPrint("\n")
-            return False
 
 # -Internal Uses-------------------------------------------------
     @classmethod
     def checkResult(cls, result: bool):
         if 0 == result:
-            cls.echo("Done", "result")
+            cit.echo("Done", "result")
         else:
-            cls.echo("Failed", "result")
+            cit.echo("Failed", "result")
 
     @classmethod
     def getUser(cls):
         return getpass.getuser()
-
-    def asyncPrint(self, words: str):
-        '不直接打印，等 stdout 线程锁打开时再输出'
-        q = self.q.get('stdout')
-        if words:
-            q.put(words)
-        self.printQueue()
-
-    @async
-    @lockStdout
-    def printQueue(self):
-        '找适当的时间，将 stdout 队列全部打印出来'
-        q = self.q.get('stdout')
-        while not q.empty():
-            print(q.get())
-
-if __name__ == '__main__':
-    ktk = KyanToolKit()
-    ktk.update()
