@@ -19,7 +19,7 @@ from functools import wraps
 class KyanToolKit(object):
     @property
     def version(self):
-        return '5.0.0'
+        return '5.0.1'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -99,9 +99,11 @@ class KyanToolKit(object):
     @classmethod
     def clearScreen(cls):
         """清屏"""
-        if "win" in sys.platform:
+        if "win32" in sys.platform:
             os.system('cls')
         elif "linux" in sys.platform:
+            os.system('clear')
+        elif 'darwin' in sys.platform:
             os.system('clear')
         else:
             cit.err("No clearScreen for " + sys.platform)

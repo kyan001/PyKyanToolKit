@@ -16,9 +16,9 @@ import KyanToolKit
 
 class test_KyanToolKit(unittest.TestCase):
     '''
-    用于测试 KyanToolKit
+    KyanToolKit.py Unit Tests
     '''
-    ktk_version = '5.0.0'
+    ktk_version = '5.0.1'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit()
@@ -80,7 +80,7 @@ class test_KyanToolKit(unittest.TestCase):
 
     def test_clearScreen(self):
         self.ktk.clearScreen()
-        self.assertEqual(self.fakeos.readline(), "cls")
+        self.assertTrue(self.fakeos.readline() in 'cls clear')
 
     def test_checkResult_1(self):
         self.ktk.checkResult(0)
@@ -146,4 +146,4 @@ class test_KyanToolKit(unittest.TestCase):
 
 if __name__ == '__main__':
     KyanToolKit.KyanToolKit().clearScreen()
-    unittest.main(verbosity=2, exit=False)  # 更多屏显信息，最后不调用sys.exit()
+    unittest.main(verbosity=2, exit=False)  # print more info, no sys.exit() called.
