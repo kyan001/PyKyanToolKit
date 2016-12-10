@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 ##################################################################
 # For KTK
 ##################################################################
@@ -106,6 +106,11 @@ class test_KyanToolKit(unittest.TestCase):
         result = self.ktk.ajax(url, param, 'get')
         cast = result.get('subjects')[0].get('casts')[1].get('name')
         self.assertEqual(cast, '新垣结衣')
+
+    def test_readFile(self):
+        filepath = './test_KyanToolKit.py'
+        content = self.ktk.readFile(filepath)
+        self.assertTrue(content is not None)
 
     def test_needPlatform(self):
         self.ktk.needPlatform(sys.platform)

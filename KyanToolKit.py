@@ -162,6 +162,19 @@ class KyanToolKit(object):
             return rsp_dict
         return None
 
+    @classmethod
+    def readFile(cls, filepath):
+        for mode in ("utf-8", 'gbk', 'cp1252', 'windows-1252', 'latin-1'):
+            try:
+                with open(filepath, mode='r', encoding=mode) as f:
+                    content = f.read()
+                    cit.info('以 {} 格式打开文件'.format(mode))
+                    return content
+            except UnicodeDecodeError:
+                cit.warn('打开文件：尝试 {} 格式失败'.format(mode))
+        return None
+
+
 # -Pre-checks---------------------------------------------------
     @classmethod
     @cit.as_session("Platform Check")
