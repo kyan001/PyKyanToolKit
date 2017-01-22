@@ -18,7 +18,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '5.0.1'
+    ktk_version = '5.1.2'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit()
@@ -114,8 +114,8 @@ class test_KyanToolKit(unittest.TestCase):
 
     def test_needPlatform(self):
         self.ktk.needPlatform(sys.platform)
-        expect_word_need = "Need: {0}\n".format(sys.platform)
-        expect_word_current = "Current: {0}\n".format(sys.platform)
+        expect_word_need = "Need: {0}".format(sys.platform)
+        expect_word_current = "Current: {0}".format(sys.platform)
         test_output = self.fakeout.readline()
         self.assertTrue(expect_word_need in test_output)
         self.assertTrue(expect_word_current in test_output)
@@ -123,8 +123,8 @@ class test_KyanToolKit(unittest.TestCase):
     def test_needUser(self):
         current_user = self.ktk.getUser()
         self.ktk.needUser(current_user)
-        expect_word_need = "Need: {0}\n".format(current_user)
-        expect_word_current = "Current: {0}\n".format(current_user)
+        expect_word_need = "Need: {0}".format(current_user)
+        expect_word_current = "Current: {0}".format(current_user)
         test_output = self.fakeout.readline()
         self.assertTrue(expect_word_need in test_output)
         self.assertTrue(expect_word_current in test_output)

@@ -19,7 +19,7 @@ from functools import wraps
 class KyanToolKit(object):
     @property
     def version(self):
-        return '5.0.1'
+        return '5.1.2'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -182,7 +182,7 @@ class KyanToolKit(object):
         cit.info("Need: " + expect_platform)
         cit.info("Current: " + sys.platform)
         if expect_platform not in sys.platform:
-            cls.bye("Platform Check Failed")
+            cit.bye("Platform Check Failed")
 
     @classmethod
     @cit.as_session("User Check")
@@ -190,7 +190,7 @@ class KyanToolKit(object):
         cit.info("Need: " + expect_user)
         cit.info("Current: " + cls.getUser())
         if cls.getUser() != expect_user:
-            cls.bye("User Check Failed")
+            cit.bye("User Check Failed")
 
 # -Debug---------------------------------------------------------
     def TRACE(self, input_: str, trace_type='INFO'):
