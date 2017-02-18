@@ -16,7 +16,7 @@ setup(
 
     # Author details
     author='Kai Yan',
-    author_email='kai@superfarmer.net',
+    author_email='kai@kyan001.com',
 
     # Choose your license
     license='MIT',

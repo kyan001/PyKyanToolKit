@@ -69,12 +69,12 @@ class test_KyanToolKit(unittest.TestCase):
         self.assertEqual(md5, 'f1feeaa3d698685b6a6179520449e206')
 
     def test_imageToColor_rgb(self):
-        test_url = "http://www.superfarmer.net/static/img/index/div_card_products.png"
+        test_url = "http://www.kyan001.com/static/img/index/div_card_products.png"
         color = self.ktk.imageToColor(test_url)
         self.assertEqual(color, (5, 147, 208))
 
     def test_imageToColor_hex(self):
-        test_url = "http://www.superfarmer.net/static/img/index/div_card_products.png"
+        test_url = "http://www.kyan001.com/static/img/index/div_card_products.png"
         color = self.ktk.imageToColor(test_url, mode='hex')
         self.assertEqual(color, '#0593D0')
 
