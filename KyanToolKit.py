@@ -19,7 +19,7 @@ from functools import wraps
 class KyanToolKit(object):
     @property
     def version(self):
-        return '5.1.2'
+        return '5.2.0'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -76,7 +76,7 @@ class KyanToolKit(object):
             for cnt, (r, g, b, a) in img.getcolors(img.size[0] * img.size[1]):
                 hsv = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
                 saturation = hsv[1] * 255
-                coefficient = (saturation * cnt * a) + 0.01  # 避免出现 0
+                coefficient = (saturation * cnt * a) + 0.01  # avoid 0
                 statistics['r'] += coefficient * r
                 statistics['g'] += coefficient * g
                 statistics['b'] += coefficient * b
@@ -136,6 +136,44 @@ class KyanToolKit(object):
         proc = subprocess.Popen(args, stdout=subprocess.PIPE)
         (proc_stdout, proc_stderr) = proc.communicate(input=None)  # proc_stdin
         return proc_stdout.decode()  # stdout & stderr is in bytes format
+
+    @classmethod
+    @cit.as_session('Update File')
+    def update_file(cls, file_, url):
+        """Check and update file compares with remote_url
+
+        Args:
+            file_: str. Local filename. Normally it's __file__
+            url: str. Remote url of raw file content. Normally it's https://raw.github.com/...
+        Returns:
+            bool: file updated or not
+        """
+        def compare(s1, s2):
+            return s1 == s2, len(s2) - len(s1)
+
+        if not url or not file_:
+            return False
+        try:
+            req = urllib.request.urlopen(url)
+            raw_codes = req.read()
+            with open(file_, 'rb') as f:
+                current_codes = f.read().replace(b'\r', b'')
+            is_same, diff = compare(current_codes, raw_codes)
+            if is_same:
+                cit.info("{} is already up-to-date.".format(file_))
+            else:
+                cit.ask("{f} has a newer version. Update? ({diff} char added)".format(f=file_, diff=diff))
+                if cit.get_choice(['Yes', 'No']) == 'Yes':
+                    with open(file_, 'wb') as f:
+                        f.write(raw_codes)
+                    cit.info("Update Success.")
+                    return True
+                else:
+                    cit.warn("Update Canceled")
+                    return False
+        except Exception as e:
+            cit.err("{f} update failed: {e}".format(f=file_, e=e))
+            return False
 
 # -Get Information------------------------------------------------
     @classmethod

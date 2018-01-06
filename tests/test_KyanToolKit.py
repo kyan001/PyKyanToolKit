@@ -18,7 +18,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '5.1.2'
+    ktk_version = '5.2.0'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit()
@@ -148,6 +148,7 @@ class test_KyanToolKit(unittest.TestCase):
         self.assertTrue(os.path.exists(f))
         if not old_trace_exist:
             os.remove(f)
+
 
 if __name__ == '__main__':
     KyanToolKit.KyanToolKit().clearScreen()
