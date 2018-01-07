@@ -18,7 +18,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '5.2.0'
+    ktk_version = '5.3.0'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit()
@@ -46,7 +46,7 @@ class test_KyanToolKit(unittest.TestCase):
         os.system = self.os_system
 
     def test_version(self):
-        self.assertEqual(self.ktk_version, self.ktk.version)
+        self.assertEqual(self.ktk_version, self.ktk.__version__)
 
     def test_init(self):
         'testing __init__()'
@@ -82,6 +82,10 @@ class test_KyanToolKit(unittest.TestCase):
         self.ktk.clearScreen()
         self.assertTrue(self.fakeos.readline() in 'cls clear')
 
+    def test_getPyCmd(self):
+        self.ktk.getPyCmd()
+        self.assertTrue(self.fakeos.readline() in 'py python3')
+
     def test_checkResult_1(self):
         self.ktk.checkResult(0)
         self.assertTrue("Done" in self.fakeout.readline())
@@ -111,6 +115,13 @@ class test_KyanToolKit(unittest.TestCase):
         filepath = './test_KyanToolKit.py'
         content = self.ktk.readFile(filepath)
         self.assertTrue(content is not None)
+
+    def test_updateFile(self):
+        url = 'https://raw.githubusercontent.com/kyan001/PyKyanToolKit/master/tests/testfile'
+        result = self.ktk.updateFile('./testfile', url)
+        expect = './testfile is already up-to-date.'
+        self.assertFalse(result)
+        self.assertTrue(expect in self.fakeout.readline())
 
     def test_needPlatform(self):
         self.ktk.needPlatform(sys.platform)

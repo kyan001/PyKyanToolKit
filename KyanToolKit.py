@@ -17,9 +17,7 @@ from functools import wraps
 
 
 class KyanToolKit(object):
-    @property
-    def version(self):
-        return '5.2.0'
+    __version__ = '5.3.0'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -109,6 +107,18 @@ class KyanToolKit(object):
             cit.err("No clearScreen for " + sys.platform)
 
     @classmethod
+    def getPyCmd(cls):
+        """清屏"""
+        if "win32" in sys.platform:
+            os.system('py')
+        elif "linux" in sys.platform:
+            os.system('python3')
+        elif 'darwin' in sys.platform:
+            os.system('python3')
+        else:
+            cit.err("No python3 command for " + sys.platform)
+
+    @classmethod
     @cit.as_session('Run Command')
     def runCmd(cls, cmd):
         """run command and show if success or failed
@@ -138,8 +148,7 @@ class KyanToolKit(object):
         return proc_stdout.decode()  # stdout & stderr is in bytes format
 
     @classmethod
-    @cit.as_session('Update File')
-    def update_file(cls, file_, url):
+    def updateFile(cls, file_, url):
         """Check and update file compares with remote_url
 
         Args:
@@ -161,8 +170,9 @@ class KyanToolKit(object):
             is_same, diff = compare(current_codes, raw_codes)
             if is_same:
                 cit.info("{} is already up-to-date.".format(file_))
+                return False
             else:
-                cit.ask("{f} has a newer version. Update? ({diff} char added)".format(f=file_, diff=diff))
+                cit.ask("A new version is available. Update? (Diff: {})".format(diff))
                 if cit.get_choice(['Yes', 'No']) == 'Yes':
                     with open(file_, 'wb') as f:
                         f.write(raw_codes)
