@@ -17,7 +17,7 @@ from functools import wraps
 
 
 class KyanToolKit(object):
-    __version__ = '5.3.0'
+    __version__ = '5.3.1'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -39,7 +39,7 @@ class KyanToolKit(object):
 # -Text Process---------------------------------------------------
     @classmethod
     def banner(cls, content_="Well Come"):
-        '生成占3行的字符串'
+        """生成占3行的字符串"""
         # char def
         sp_char = "#"
         # length calc
@@ -61,7 +61,7 @@ class KyanToolKit(object):
 # -Image Process--------------------------------------------------
     @staticmethod
     def imageToColor(url: str, scale=200, mode='rgb'):
-        '将 url 指向的图片提纯为一个颜色'
+        """将 url 指向的图片提纯为一个颜色"""
         from PIL import Image
         import colorsys
         if url:
@@ -96,7 +96,7 @@ class KyanToolKit(object):
 # -System Fucntions-----------------------------------------------
     @classmethod
     def clearScreen(cls):
-        """清屏"""
+        """Clear the screen"""
         if "win32" in sys.platform:
             os.system('cls')
         elif "linux" in sys.platform:
@@ -108,13 +108,13 @@ class KyanToolKit(object):
 
     @classmethod
     def getPyCmd(cls):
-        """清屏"""
+        """get OS's python command"""
         if "win32" in sys.platform:
-            os.system('py')
+            return 'py'
         elif "linux" in sys.platform:
-            os.system('python3')
+            return 'python3'
         elif 'darwin' in sys.platform:
-            os.system('python3')
+            return 'python3'
         else:
             cit.err("No python3 command for " + sys.platform)
 
@@ -212,6 +212,7 @@ class KyanToolKit(object):
 
     @classmethod
     def readFile(cls, filepath):
+        """Try different encoding to open a file in readonly mode"""
         for mode in ("utf-8", 'gbk', 'cp1252', 'windows-1252', 'latin-1'):
             try:
                 with open(filepath, mode='r', encoding=mode) as f:

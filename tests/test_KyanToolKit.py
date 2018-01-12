@@ -18,7 +18,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '5.3.0'
+    ktk_version = '5.3.1'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit()
@@ -83,8 +83,8 @@ class test_KyanToolKit(unittest.TestCase):
         self.assertTrue(self.fakeos.readline() in 'cls clear')
 
     def test_getPyCmd(self):
-        self.ktk.getPyCmd()
-        self.assertTrue(self.fakeos.readline() in 'py python3')
+        result = self.ktk.getPyCmd()
+        self.assertTrue(result in ('py', 'python3'))
 
     def test_checkResult_1(self):
         self.ktk.checkResult(0)
@@ -162,5 +162,4 @@ class test_KyanToolKit(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    KyanToolKit.KyanToolKit().clearScreen()
     unittest.main(verbosity=2, exit=False)  # print more info, no sys.exit() called.
