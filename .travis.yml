@@ -3,4 +3,4 @@ install:
     - pip install -r requirements.pip
 script:
     - cd tests
-    - sudo -E env "PATH=$PATH" python test_KyanToolKit.py
+    - python test_KyanToolKit.py
