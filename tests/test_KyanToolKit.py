@@ -105,11 +105,11 @@ class test_KyanToolKit(unittest.TestCase):
         self.assertEqual(self.ktk.getUser(), os.getlogin())
 
     def test_ajax_get(self):
-        url = 'https://api.douban.com/v2/movie/search'
-        param = {'q': '胜者即是正义', 'count': 1}
+        url = 'https://yesno.wtf/api'
+        param = {'force': 'yes'}
         result = self.ktk.ajax(url, param, 'get')
-        cast = result.get('subjects')[0].get('casts')[1].get('name')
-        self.assertEqual(cast, '新垣结衣')
+        answer = result.get('answer')
+        self.assertEqual(answer, 'yes')
 
     def test_readFile(self):
         filepath = './test_KyanToolKit.py'
