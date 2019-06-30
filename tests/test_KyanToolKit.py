@@ -11,7 +11,7 @@ import FakeIn
 import FakeOs
 
 sys.path.insert(0, '../')
-import KyanToolKit
+import KyanToolKit  # noqa
 
 
 class test_KyanToolKit(unittest.TestCase):
