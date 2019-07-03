@@ -17,7 +17,7 @@ from functools import wraps
 
 
 class KyanToolKit(object):
-    __version__ = '5.3.1'
+    __version__ = '6.0.0'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -37,8 +37,8 @@ class KyanToolKit(object):
         return call
 
 # -Text Process---------------------------------------------------
-    @classmethod
-    def banner(cls, content_="Well Come"):
+    @staticmethod
+    def banner(content_="Well Come"):
         """生成占3行的字符串"""
         # char def
         sp_char = "#"
@@ -52,8 +52,8 @@ class KyanToolKit(object):
         banner_border = sp_char * content_line_length
         return banner_border + '\n' + content_line + '\n' + banner_border
 
-    @classmethod
-    def md5(cls, words=""):
+    @staticmethod
+    def md5(words=""):
         if type(words) != bytes:  # md5的输入必须为bytes类型
             words = str(words).encode()
         return hashlib.md5(words).hexdigest()
@@ -94,8 +94,8 @@ class KyanToolKit(object):
             return False
 
 # -System Fucntions-----------------------------------------------
-    @classmethod
-    def clearScreen(cls):
+    @staticmethod
+    def clearScreen():
         """Clear the screen"""
         if "win32" in sys.platform:
             os.system('cls')
@@ -106,8 +106,8 @@ class KyanToolKit(object):
         else:
             cit.err("No clearScreen for " + sys.platform)
 
-    @classmethod
-    def getPyCmd(cls):
+    @staticmethod
+    def getPyCmd():
         """get OS's python command"""
         if "win32" in sys.platform:
             return 'py'
@@ -118,9 +118,13 @@ class KyanToolKit(object):
         else:
             cit.err("No python3 command for " + sys.platform)
 
-    @classmethod
+    @staticmethod
+    def checkResult(result: bool):
+        cit.echo("Done" if result == 0 else "Failed", "result")
+
+    @staticmethod
     @cit.as_session('Run Command')
-    def runCmd(cls, cmd):
+    def runCmd(cmd):
         """run command and show if success or failed
 
         Args:
@@ -130,11 +134,11 @@ class KyanToolKit(object):
         """
         cit.echo(cmd, "command")
         result = os.system(cmd)
-        cls.checkResult(result)
+        KyanToolKit.checkResult(result)
 
-    @classmethod
+    @staticmethod
     @cit.as_session('Read Command')
-    def readCmd(cls, cmd):
+    def readCmd(cmd):
         """run command and return the str format stdout
 
         Args:
@@ -147,8 +151,22 @@ class KyanToolKit(object):
         (proc_stdout, proc_stderr) = proc.communicate(input=None)  # proc_stdin
         return proc_stdout.decode()  # stdout & stderr is in bytes format
 
-    @classmethod
-    def updateFile(cls, file_, url):
+    @staticmethod
+    def isCmdExist(cmd):
+        """test if command is available for execution
+
+        Args:
+            cmd: string
+        Returns:
+            bool: if the command is exist
+        """
+        proc = os.popen("command -v {}".format(cmd))
+        result = proc.read()
+        proc.close()
+        return (result != "")
+
+    @staticmethod
+    def updateFile(file_, url):
         """Check and update file compares with remote_url
 
         Args:
@@ -186,8 +204,8 @@ class KyanToolKit(object):
             return False
 
 # -Get Information------------------------------------------------
-    @classmethod
-    def ajax(cls, url, param={}, method='get'):
+    @staticmethod
+    def ajax(url, param={}, method='get'):
         """Get info by ajax
 
         Args:
@@ -210,8 +228,8 @@ class KyanToolKit(object):
             return rsp_dict
         return None
 
-    @classmethod
-    def readFile(cls, filepath):
+    @staticmethod
+    def readFile(filepath):
         """Try different encoding to open a file in readonly mode"""
         for mode in ("utf-8", 'gbk', 'cp1252', 'windows-1252', 'latin-1'):
             try:
@@ -225,20 +243,20 @@ class KyanToolKit(object):
 
 
 # -Pre-checks---------------------------------------------------
-    @classmethod
+    @staticmethod
     @cit.as_session("Platform Check")
-    def needPlatform(cls, expect_platform: str):
+    def needPlatform(expect_platform: str):
         cit.info("Need: " + expect_platform)
         cit.info("Current: " + sys.platform)
         if expect_platform not in sys.platform:
             cit.bye("Platform Check Failed")
 
-    @classmethod
+    @staticmethod
     @cit.as_session("User Check")
-    def needUser(cls, expect_user: str):
+    def needUser(expect_user: str):
         cit.info("Need: " + expect_user)
-        cit.info("Current: " + cls.getUser())
-        if cls.getUser() != expect_user:
+        cit.info("Current: " + KyanToolKit.getUser())
+        if KyanToolKit.getUser() != expect_user:
             cit.bye("User Check Failed")
 
 # -Debug---------------------------------------------------------
@@ -258,13 +276,6 @@ class KyanToolKit(object):
 
 
 # -Internal Uses-------------------------------------------------
-    @classmethod
-    def checkResult(cls, result: bool):
-        if 0 == result:
-            cit.echo("Done", "result")
-        else:
-            cit.echo("Failed", "result")
-
-    @classmethod
-    def getUser(cls):
+    @staticmethod
+    def getUser():
         return getpass.getuser()

@@ -18,10 +18,11 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '5.3.1'
+    ktk_version = '6.0.0'
 
     def setUp(self):
-        self.ktk = KyanToolKit.KyanToolKit()
+        self.ktk = KyanToolKit.KyanToolKit
+        self.ktk_inst = KyanToolKit.KyanToolKit()
         # redirect stdout
         self.console_out = sys.stdout
         self.fakeout = FakeOut.FakeOut()
@@ -50,7 +51,7 @@ class test_KyanToolKit(unittest.TestCase):
 
     def test_init(self):
         'testing __init__()'
-        self.assertTrue(self.ktk.trace_file)
+        self.assertTrue(self.ktk_inst.trace_file)
 
     def test_banner(self):
         expect_word = '###############\n#  Test Text  #\n###############'
@@ -104,6 +105,10 @@ class test_KyanToolKit(unittest.TestCase):
     def test_getUser(self):
         self.assertEqual(self.ktk.getUser(), os.getlogin())
 
+    def test_isCmdExist(self):
+        self.assertFalse(self.ktk.isCmdExist("notexist"))
+        self.assertTrue(self.ktk.isCmdExist("ls"))
+
     def test_ajax_get(self):
         url = 'https://yesno.wtf/api'
         param = {'force': 'yes'}
@@ -141,24 +146,25 @@ class test_KyanToolKit(unittest.TestCase):
         self.assertTrue(expect_word_current in test_output)
 
     def test_TRACE(self):
-        f = self.ktk.trace_file
+        f = self.ktk_inst.trace_file
         old_trace_exist = os.path.exists(f)
-        self.ktk.TRACE("Test Text")
+        self.ktk_inst.TRACE("Test Text")
         self.assertTrue(os.path.exists(f))
         if not old_trace_exist:
             os.remove(f)
 
     def test_inTrace(self):
-        @self.ktk.inTrace
+        @self.ktk_inst.inTrace
         def inTrace():
             print("Test Text")
-        f = self.ktk.trace_file
-        old_trace_exist = os.path.exists(f)
+
+        fl = self.ktk_inst.trace_file
+        old_trace_exist = os.path.exists(fl)
         inTrace()
         self.assertEqual(self.fakeout.readline(), "Test Text\n")
-        self.assertTrue(os.path.exists(f))
+        self.assertTrue(os.path.exists(fl))
         if not old_trace_exist:
-            os.remove(f)
+            os.remove(fl)
 
 
 if __name__ == '__main__':
