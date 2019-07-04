@@ -5,6 +5,7 @@
 import sys
 import os
 import unittest
+import getpass
 
 import FakeOut
 import FakeIn
@@ -18,7 +19,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '6.0.0'
+    ktk_version = '6.0.1'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit
@@ -103,7 +104,7 @@ class test_KyanToolKit(unittest.TestCase):
         self.assertEqual(self.ktk.readCmd(r"echo Test Text"), "Test Text\n")
 
     def test_getUser(self):
-        self.assertEqual(self.ktk.getUser(), os.getlogin())
+        self.assertEqual(self.ktk.getUser(), getpass.getuser())
 
     def test_isCmdExist(self):
         self.assertFalse(self.ktk.isCmdExist("notexist"))

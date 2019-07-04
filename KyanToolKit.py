@@ -17,7 +17,7 @@ from functools import wraps
 
 
 class KyanToolKit(object):
-    __version__ = '6.0.0'
+    __version__ = '6.0.1'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -137,7 +137,6 @@ class KyanToolKit(object):
         KyanToolKit.checkResult(result)
 
     @staticmethod
-    @cit.as_session('Read Command')
     def readCmd(cmd):
         """run command and return the str format stdout
 
