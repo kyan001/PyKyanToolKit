@@ -106,6 +106,7 @@ class test_KyanToolKit(unittest.TestCase):
     def test_getUser(self):
         self.assertEqual(self.ktk.getUser(), getpass.getuser())
 
+    @unittest.skipIf(os.name == 'nt', 'Only in posix')
     def test_isCmdExist(self):
         self.assertFalse(self.ktk.isCmdExist("notexist"))
         self.assertTrue(self.ktk.isCmdExist("ls"))
