@@ -6,7 +6,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='6.0.1',
+    version='6.1.1',
 
     description='A console toolkit for common uses',
     long_description='A console toolkit for common uses, by Kyan',

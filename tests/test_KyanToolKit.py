@@ -19,7 +19,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '6.0.1'
+    ktk_version = '6.1.1'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit
@@ -129,6 +129,11 @@ class test_KyanToolKit(unittest.TestCase):
         expect = './testfile is already up-to-date.'
         self.assertFalse(result)
         self.assertTrue(expect in self.fakeout.readline())
+
+    def test_getDir(self):
+        dirname, basename = self.ktk.getDir(__file__)
+        self.assertTrue(dirname.endswith('tests'))
+        self.assertEqual(basename, "tests")
 
     def test_needPlatform(self):
         self.ktk.needPlatform(sys.platform)

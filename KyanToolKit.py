@@ -17,7 +17,7 @@ from functools import wraps
 
 
 class KyanToolKit(object):
-    __version__ = '6.0.1'
+    __version__ = '6.1.1'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -163,6 +163,23 @@ class KyanToolKit(object):
         result = proc.read()
         proc.close()
         return (result != "")
+
+    @staticmethod
+    def getDir(file_) -> (str, str):
+        """Get file dir's dirname and dir's basename.
+
+        If file located at /path/to/filedir/file, then the dirname is "/path/to/filedir", and basename is "filedir"
+
+        Args:
+            file_: str. Local filename. Normally it's __file__
+
+        Returns:
+            str: file dir's path.
+            str: file dir's basename.
+        """
+        dirname = os.path.dirname(os.path.abspath(file_))
+        basename = os.path.basename(dirname)
+        return dirname, basename
 
     @staticmethod
     def updateFile(file_, url):
