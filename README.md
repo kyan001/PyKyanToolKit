@@ -8,7 +8,7 @@ A console toolkit for common uses
 >>> from KyanToolKit import KyanToolKit as ktk
 
 >>> ktk.__version__
-'6.0.1'
+'6.2.1'
 
 >>> Print(ktk.banner("KyanToolKit"))  # Generate banner for text
 ###################
@@ -50,17 +50,53 @@ hello
 True
 
 >>> ktk.getDir("./file")  # Get file dir's path and basename.
-("/path/to/filedir", "filedir")  # As python tuple
+("/path/to/filedir", "filedir")  # As python tuple.
+
+>>> print("\n".join(ktk.diff(...)))  # .diff() returns list. Use "\n".join() to print.
+>>> ktk.diff("str1", "str2")  # Compare 2 strings, return the list of diffs.
+--- <class 'str'>
++++ <class 'str'>
+@@ -1 +1 @@
+-str1
++str2
+
+>>> ktk.diff(["a", "b"], ["a", "b", "c"])  # Compare 2 lists and print diffs.
+--- <class 'list'>
++++ <class 'list'>
+@@ -2,0 +3 @@
++c
+
+>>> ktk.diff(["a", "b"], ["a", "b", "c"], context=2)  # Show diffs with 2 extra context lines.
+--- <class 'list'>
++++ <class 'list'>
+@@ -1,2 +1,3 @@
+ a  # context
+ b  # context
++c  # diff
+
+>>> ktk.diff("/path/to/file1", "/path/to/file2")  # Compare between 2 files.
+--- file1
++++ file2
+...
+
+>>> ktk.diff("/path/to/file1", "str")  # Compare between file and str/list.
+--- file1
++++ <class 'str'>
+...
+
+>>> if not ktk.diff('str', 'str'): print("No diff")  # If no diff, return [].
+No diff
 
 >>> ktk.updateFile('file', 'http://file-url')  # Update file if the file is not as same as url content.
+False  # if already up-to-date.
 
 >>> ktk.ajax('http://ajax-url')  # Start a AJAX request.
-{'result': 'data'}  # As python dict
+{'result': 'data'}  # As python dict.
 
 >>> ktk.ajax('http://ajax-url', {'data': 'value'})  # AJAX request with param.
 {'result': 'data'}
 
->>> ktk.ajax('http://ajax-url', method='post')  # AJAX request using post. default if 'get'.
+>>> ktk.ajax('http://ajax-url', method='post')  # AJAX request using post. default is 'get'.
 {'result': 'data'}
 
 >>> ktk.readFile('file')  # Read file using different encoding automatically.
