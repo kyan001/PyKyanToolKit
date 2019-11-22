@@ -20,7 +20,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '6.1.1'
+    ktk_version = '6.2.1'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit
@@ -136,6 +136,79 @@ class test_KyanToolKit(unittest.TestCase):
         dirname, basename = self.ktk.getDir(__file__)
         self.assertTrue(dirname.endswith('tests'))
         self.assertEqual(basename, "tests")
+
+    def test_diff_same(self):
+        diffs = self.ktk.diff("test", "test")
+        self.assertFalse(diffs)
+
+    def test_diff_str(self):
+        a, b = "test1", "test2"
+        expect_diff = [
+            "--- <class 'str'>",
+            "+++ <class 'str'>",
+            '@@ -1 +1 @@',
+            '-test1',
+            '+test2'
+        ]
+        self.assertEqual(self.ktk.diff(a, b), expect_diff)
+
+    def test_diff_list(self):
+        a, b = ["a", "c"], ["b", "c"]
+        expect_diff = [
+            "--- <class 'list'>",
+            "+++ <class 'list'>",
+            '@@ -1 +1 @@',
+            '-a',
+            '+b'
+        ]
+        self.assertEqual(self.ktk.diff(a, b), expect_diff)
+
+    def test_diff_context(self):
+        a, b = ["a", "c"], ["b", "c"]
+        expect_diff = [
+            "--- <class 'list'>",
+            "+++ <class 'list'>",
+            '@@ -1,2 +1,2 @@',
+            '-a',
+            '+b',
+            ' c'
+        ]
+        self.assertEqual(self.ktk.diff(a, b, context=1), expect_diff)
+
+    def test_diff_file(self):
+        a = os.path.join(ktk_dir, 'tests', 'testfile')
+        b = "This file should not changed too"
+        expect_diff = [
+            '--- testfile',
+            "+++ <class 'str'>",
+            '@@ -1 +1 @@',
+            '-This file should not changed',
+            '+This file should not changed too'
+        ]
+        self.assertEqual(self.ktk.diff(a, b), expect_diff)
+
+    def test_diff_files(self):
+        a = os.path.join(ktk_dir, 'tests', 'testfile')
+        b = os.path.join(ktk_dir, 'tests', 'testfile2')
+        expect_diff = [
+            '--- testfile',
+            '+++ testfile2',
+            '@@ -1 +1 @@',
+            '-This file should not changed',
+            '+This file should not changed too'
+        ]
+        self.assertEqual(self.ktk.diff(a, b), expect_diff)
+
+    def test_diff_force_str(self):
+        a = os.path.join(ktk_dir, 'tests', 'testfile')
+        b = os.path.join(ktk_dir, 'tests', 'testfile2')
+        expect_diff_partial = [
+            "--- <class 'str'>",
+            "+++ <class 'str'>",
+            '@@ -1 +1 @@'
+        ]
+        for li in expect_diff_partial:
+            self.assertTrue(li in self.ktk.diff(a, b, force_str=True))
 
     def test_needPlatform(self):
         self.ktk.needPlatform(sys.platform)
