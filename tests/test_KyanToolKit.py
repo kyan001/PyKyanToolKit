@@ -11,7 +11,8 @@ import FakeOut
 import FakeIn
 import FakeOs
 
-sys.path.insert(0, '../')
+ktk_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ktk_dir)
 import KyanToolKit  # noqa
 
 
