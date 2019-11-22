@@ -120,14 +120,15 @@ class test_KyanToolKit(unittest.TestCase):
         self.assertEqual(answer, 'yes')
 
     def test_readFile(self):
-        filepath = './test_KyanToolKit.py'
+        filepath = os.path.join(ktk_dir, 'tests', 'test_KyanToolKit.py')
         content = self.ktk.readFile(filepath)
         self.assertTrue(content is not None)
 
     def test_updateFile(self):
         url = 'https://raw.githubusercontent.com/kyan001/PyKyanToolKit/master/tests/testfile'
-        result = self.ktk.updateFile('./testfile', url)
-        expect = './testfile is already up-to-date.'
+        filepath = os.path.join(ktk_dir, 'tests', 'testfile')
+        result = self.ktk.updateFile(filepath, url)
+        expect = 'testfile is already up-to-date.'
         self.assertFalse(result)
         self.assertTrue(expect in self.fakeout.readline())
 
