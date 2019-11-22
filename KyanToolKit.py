@@ -12,8 +12,8 @@ import urllib.request
 import hashlib
 import json
 import io
-import consoleiotools as cit
 from functools import wraps
+import consoleiotools as cit
 
 
 class KyanToolKit(object):
