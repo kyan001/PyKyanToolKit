@@ -13,11 +13,13 @@ import hashlib
 import json
 import io
 from functools import wraps
+import difflib
+
 import consoleiotools as cit
 
 
 class KyanToolKit(object):
-    __version__ = '6.1.1'
+    __version__ = '6.2.1'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -174,12 +176,41 @@ class KyanToolKit(object):
             file_: str. Local filename. Normally it's __file__
 
         Returns:
-            str: file dir's path.
-            str: file dir's basename.
+            str: File dir's path.
+            str: File dir's basename.
         """
         dirname = os.path.dirname(os.path.abspath(file_))
         basename = os.path.basename(dirname)
         return dirname, basename
+
+    @staticmethod
+    def diff(a, b, force_str=False, context=0) -> list:
+        """Compare two strings/lists or files and return their diffs.
+
+        Args:
+            a: str/list/file. The source of comparison.
+            b: str/list/file. The target of comparison.
+            force_str: bool. Set to `True` if you wanna force to compare `a` and `b` as string. Default is False.
+            context: int. Number of context lines returns with diffs. Default is 0, no context lines shows.
+
+        Returns:
+            list: Diffs where the dst is not same as src. Only lines with diffs in the result. The first 2 lines are the header of diffs.
+        """
+        src, dst = {'raw': a}, {'raw': b}
+        for d in (src, dst):
+            if isinstance(d['raw'], str):
+                if (not force_str) and os.path.isfile(d['raw']):
+                    d['label'] = os.path.basename(d['raw'])  # filename will show in header of diffs
+                    with open(d['raw'], encoding='utf-8') as f:
+                        d['content'] = f.readlines()
+                else:
+                    d['label'] = str(str)
+                    d['content'] = d['raw'].split('\n')  # convert str to list for comparison. Ex. ['str',]
+            else:
+                d['label'] = str(type(d['raw']))
+                d['content'] = d['raw']
+        diffs = difflib.unified_diff(src['content'], dst['content'], n=context, fromfile=src['label'], tofile=dst['label'])
+        return [ln.strip('\n') for ln in diffs]  # Ensure no \n returns
 
     @staticmethod
     def updateFile(file_, url):
