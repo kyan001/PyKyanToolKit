@@ -19,7 +19,7 @@ import consoleiotools as cit
 
 
 class KyanToolKit(object):
-    __version__ = '6.2.1'
+    __version__ = '6.3.0'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -56,7 +56,7 @@ class KyanToolKit(object):
 
     @staticmethod
     def md5(words=""):
-        if type(words) != bytes:  # md5的输入必须为bytes类型
+        if type(words) != bytes:  # md5的输入必须为 bytes 类型
             words = str(words).encode()
         return hashlib.md5(words).hexdigest()
 
@@ -111,7 +111,7 @@ class KyanToolKit(object):
     @staticmethod
     def getPyCmd():
         """get OS's python command"""
-        if "win32" in sys.platform:
+        if sys.platform.startswith('win'):
             return 'py'
         elif "linux" in sys.platform:
             return 'python3'
@@ -121,22 +121,18 @@ class KyanToolKit(object):
             cit.err("No python3 command for " + sys.platform)
 
     @staticmethod
-    def checkResult(result: bool):
-        cit.echo("Done" if result == 0 else "Failed", "result")
-
-    @staticmethod
-    @cit.as_session('Run Command')
     def runCmd(cmd):
         """run command and show if success or failed
 
         Args:
             cmd: string
         Returns:
-            bool: if this command run successfully
+            bool: Does this command run successfully
         """
         cit.echo(cmd, "command")
         result = os.system(cmd)
-        KyanToolKit.checkResult(result)
+        if not result:
+            cit.warn("Command Failed")
 
     @staticmethod
     def readCmd(cmd):
@@ -147,6 +143,7 @@ class KyanToolKit(object):
         Returns:
             str: what the command's echo
         """
+        cit.echo(cmd, "command")
         args = shlex.split(cmd)
         proc = subprocess.Popen(args, stdout=subprocess.PIPE)
         (proc_stdout, proc_stderr) = proc.communicate(input=None)  # proc_stdin

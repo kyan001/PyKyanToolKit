@@ -20,7 +20,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '6.2.1'
+    ktk_version = '6.3.0'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit
@@ -88,14 +88,6 @@ class test_KyanToolKit(unittest.TestCase):
     def test_getPyCmd(self):
         result = self.ktk.getPyCmd()
         self.assertTrue(result in ('py', 'python3'))
-
-    def test_checkResult_1(self):
-        self.ktk.checkResult(0)
-        self.assertTrue("Done" in self.fakeout.readline())
-
-    def test_checkResult_2(self):
-        self.ktk.checkResult(1)
-        self.assertTrue("Failed" in self.fakeout.readline())
 
     def test_runCmd(self):
         self.ktk.runCmd("echo Test Text")
