@@ -6,6 +6,7 @@ import sys
 import os
 import unittest
 import getpass
+from unittest.mock import patch
 
 import FakeOut
 import FakeIn
@@ -20,7 +21,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '6.3.1'
+    ktk_version = '6.3.3'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit
@@ -99,10 +100,10 @@ class test_KyanToolKit(unittest.TestCase):
     def test_getUser(self):
         self.assertEqual(self.ktk.getUser(), getpass.getuser())
 
-    @unittest.skipIf(os.name == 'nt', 'Only in posix')
     def test_isCmdExist(self):
-        self.assertFalse(self.ktk.isCmdExist("notexist"))
-        self.assertTrue(self.ktk.isCmdExist("ls"))
+        with patch("os.system", new=self.os_system):
+            self.assertFalse(self.ktk.isCmdExist("notexist"))
+            self.assertTrue(self.ktk.isCmdExist("ls"))
 
     def test_ajax_get(self):
         url = 'https://yesno.wtf/api'
