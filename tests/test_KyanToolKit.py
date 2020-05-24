@@ -20,7 +20,7 @@ class test_KyanToolKit(unittest.TestCase):
     '''
     KyanToolKit.py Unit Tests
     '''
-    ktk_version = '6.3.0'
+    ktk_version = '6.3.1'
 
     def setUp(self):
         self.ktk = KyanToolKit.KyanToolKit

@@ -19,7 +19,7 @@ import consoleiotools as cit
 
 
 class KyanToolKit(object):
-    __version__ = '6.3.0'
+    __version__ = '6.3.1'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -129,9 +129,10 @@ class KyanToolKit(object):
         Returns:
             bool: Does this command run successfully
         """
+        SUCCESS_CODE = 0
         cit.echo(cmd, "command")
         result = os.system(cmd)
-        if not result:
+        if not result == SUCCESS_CODE:
             cit.warn("Command Failed")
 
     @staticmethod
