@@ -19,7 +19,7 @@ import consoleiotools as cit
 
 
 class KyanToolKit(object):
-    __version__ = '6.3.1'
+    __version__ = '6.3.3'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -159,10 +159,15 @@ class KyanToolKit(object):
         Returns:
             bool: if the command is exist
         """
-        proc = os.popen("command -v {}".format(cmd))
-        result = proc.read()
-        proc.close()
-        return (result != "")
+        if sys.platform.startswith('win'):
+            result = os.system("where {} >nul 2>&1".format(cmd))
+            print("win", result)
+            return (result == 0)
+        else:
+            proc = os.popen("command -v {}".format(cmd))
+            result = proc.read()
+            proc.close()
+            return (result != "")
 
     @staticmethod
     def getDir(file_) -> (str, str):
