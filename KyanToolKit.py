@@ -19,7 +19,7 @@ import consoleiotools as cit
 
 
 class KyanToolKit(object):
-    __version__ = '6.3.3'
+    __version__ = '6.3.4'
 
     def __init__(self, trace_file="trace.xml"):
         self.trace_file = trace_file
@@ -161,7 +161,6 @@ class KyanToolKit(object):
         """
         if sys.platform.startswith('win'):
             result = os.system("where {} >nul 2>&1".format(cmd))
-            print("win", result)
             return (result == 0)
         else:
             proc = os.popen("command -v {}".format(cmd))
